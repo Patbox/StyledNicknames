@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "id": "styled-nicknames",
+  "version": "${version}",
+
+  "name": "Styled Nicknames",
+  "description": "Simple, but configurable nicknaming mod allowing your server's players (and admins) to change their nickname with full formatting support.",
+  "authors": [
+    "Patbox"
+  ],
+  "contact": {
+    "homepage": "https://pb4.eu",
+    "sources": "https://github.com/Patbox/StyledNicknames"
+  },
+
+  "license": "LGPLv3",
+
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "eu.pb4.stylednicknames.StyledNicknamesMod"
+    ]
+  },
+  "mixins": [
+    "stylednicknames.mixins.json"
+  ],
+
+  "depends": {
+    "fabricloader": ">=0.11.3",
+    "fabric": "*",
+    "minecraft": "1.17.x"
+  }
+}
