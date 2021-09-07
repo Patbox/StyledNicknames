@@ -139,7 +139,7 @@ public class Commands {
         if (ConfigManager.loadConfig()) {
             context.getSource().sendFeedback(new LiteralText("Reloaded config!"), false);
         } else {
-            context.getSource().sendError(new LiteralText("Error accrued while reloading config!").formatted(Formatting.RED));
+            context.getSource().sendError(new LiteralText("Error occurred while reloading config!").formatted(Formatting.RED));
 
         }
         return 1;

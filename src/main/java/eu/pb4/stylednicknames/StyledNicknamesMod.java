@@ -25,7 +25,7 @@ public class StyledNicknamesMod implements ModInitializer {
 
 		PlaceholderAPI.register(new Identifier("styled-nicknames","display_name"), (ctx) -> {
 			if (ctx.hasPlayer()) {
-				return PlaceholderResult.value(NicknameHolder.of(ctx.getPlayer()).sn_getOutputOrVanilla());
+				return PlaceholderResult.value(NicknameHolder.of(ctx.getPlayer().networkHandler).sn_getOutputOrVanilla());
 			} else {
 				return PlaceholderResult.invalid("Not a player!");
 			}

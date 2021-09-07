@@ -117,7 +117,7 @@ public class ServerPlayNetworkHandlerMixin implements NicknameHolder {
 
     @Override
     public MutableText sn_getOutputOrVanilla() {
-        return this.sn_parsedNickname != null ? ConfigManager.getConfig().defaultPrefix.shallowCopy().append(this.sn_parsedNickname) : ((ServerPlayerEntity) (Object) this).getName().shallowCopy();
+        return this.sn_parsedNickname != null ? ConfigManager.getConfig().defaultPrefix.shallowCopy().append(this.sn_parsedNickname) : this.player.getName().shallowCopy();
     }
 
     @Override
