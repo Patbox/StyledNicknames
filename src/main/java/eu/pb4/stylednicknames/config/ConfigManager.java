@@ -53,4 +53,8 @@ public class ConfigManager {
             return false;
         }
     }
+
+    public static boolean isEnabled() {
+        return CONFIG != null;
+    }
 }

@@ -20,12 +20,20 @@ public class StyledNicknamesMod implements ModInitializer {
 
 	@Override
 	public void onInitialize() {
+		this.crabboardDetection();
 		Commands.register();
-		ServerLifecycleEvents.SERVER_STARTING.register((s) -> ConfigManager.loadConfig());
+		ServerLifecycleEvents.SERVER_STARTING.register((s) -> {
+			this.crabboardDetection();
+			ConfigManager.loadConfig();
+		});
 
 		PlaceholderAPI.register(new Identifier("styled-nicknames","display_name"), (ctx) -> {
 			if (ctx.hasPlayer()) {
-				return PlaceholderResult.value(NicknameHolder.of(ctx.getPlayer().networkHandler).sn_getOutputOrVanilla());
+				if (ctx.getPlayer().networkHandler != null) {
+					return PlaceholderResult.value(NicknameHolder.of(ctx.getPlayer().networkHandler).sn_getOutputOrVanilla());
+				} else {
+					return PlaceholderResult.value(ctx.getPlayer().getName());
+				}
 			} else {
 				return PlaceholderResult.invalid("Not a player!");
 			}
@@ -34,5 +42,16 @@ public class StyledNicknamesMod implements ModInitializer {
 
 	public static final Identifier id(String path) {
 		return new Identifier(ID, path);
+	}
+
+	private void crabboardDetection() {
+		if (FabricLoader.getInstance().isModLoaded("cardboard")) {
+			LOGGER.error("");
+			LOGGER.error("Cardboard detected! This mod doesn't work with it!");
+			LOGGER.error("You won't get any support as long as it's present!");
+			LOGGER.error("");
+			LOGGER.error("Read more: https://gist.github.com/Patbox/e44844294c358b614d347d369b0fc3bf");
+			LOGGER.error("");
+		}
 	}
 }

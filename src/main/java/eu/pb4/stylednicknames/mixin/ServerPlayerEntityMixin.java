@@ -16,11 +16,13 @@ public class ServerPlayerEntityMixin {
     @Inject(method = "getPlayerListName", at = @At("TAIL"), cancellable = true)
     private void replacePlayerListName(CallbackInfoReturnable<Text> cir) {
         try {
-            ConfigData data = ConfigManager.getConfig().configData;
-            if (data.changePlayerListName) {
-                var holder = NicknameHolder.of(this);
-                if (holder != null && holder.sn_shouldDisplay()) {
-                    cir.setReturnValue(holder.sn_getOutput());
+            if (ConfigManager.isEnabled()) {
+                ConfigData data = ConfigManager.getConfig().configData;
+                if (data.changePlayerListName) {
+                    var holder = NicknameHolder.of(this);
+                    if (holder != null && holder.sn_shouldDisplay()) {
+                        cir.setReturnValue(holder.sn_getOutput());
+                    }
                 }
             }
         } catch (Exception e) {

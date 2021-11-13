@@ -43,7 +43,7 @@ public class ServerPlayNetworkHandlerMixin implements NicknameHolder {
     private boolean sn_requirePermission = true;
 
     @Inject(method = "<init>", at = @At("TAIL"))
-    private void loadData(MinecraftServer server, ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
+    private void sn_loadData(MinecraftServer server, ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
         try {
             NbtString nickname = PlayerDataApi.getGlobalDataFor(player, id("nickname"), NbtString.TYPE);
             NbtByte permissions = PlayerDataApi.getGlobalDataFor(player, id("permission"), NbtByte.TYPE);
