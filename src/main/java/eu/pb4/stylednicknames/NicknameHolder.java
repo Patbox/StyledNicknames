@@ -39,6 +39,9 @@ public interface NicknameHolder {
         }
 
         @Override
+        public void sn_loadData() {}
+
+        @Override
         public boolean sn_shouldDisplay() {
             return false;
         }
@@ -73,6 +76,8 @@ public interface NicknameHolder {
     MutableText sn_getOutputOrVanilla();
 
     boolean sn_requiresPermission();
+
+    void sn_loadData();
 
     boolean sn_shouldDisplay();
 }

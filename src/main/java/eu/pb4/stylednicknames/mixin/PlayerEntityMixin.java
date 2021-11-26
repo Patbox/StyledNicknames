@@ -17,7 +17,7 @@ public abstract class PlayerEntityMixin {
     @ModifyArg(method = "getDisplayName", at = @At(value = "INVOKE", target = "Lnet/minecraft/scoreboard/Team;decorateName(Lnet/minecraft/scoreboard/AbstractTeam;Lnet/minecraft/text/Text;)Lnet/minecraft/text/MutableText;"))
     private Text replaceName(Text text) {
         try {
-            if (ConfigManager.getConfig().configData.changeDisplayName) {
+            if (ConfigManager.isEnabled() && ConfigManager.getConfig().configData.changeDisplayName) {
                 if (!this.sn_ignoreNextCall) {
                     this.sn_ignoreNextCall = true;
                     var holder = NicknameHolder.of(this);

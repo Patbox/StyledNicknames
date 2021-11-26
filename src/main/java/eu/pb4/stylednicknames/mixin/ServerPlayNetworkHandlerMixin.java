@@ -42,8 +42,8 @@ public class ServerPlayNetworkHandlerMixin implements NicknameHolder {
     @Unique
     private boolean sn_requirePermission = true;
 
-    @Inject(method = "<init>", at = @At("TAIL"))
-    private void sn_loadData(MinecraftServer server, ClientConnection connection, ServerPlayerEntity player, CallbackInfo ci) {
+    @Override
+    public void sn_loadData() {
         try {
             NbtString nickname = PlayerDataApi.getGlobalDataFor(player, id("nickname"), NbtString.TYPE);
             NbtByte permissions = PlayerDataApi.getGlobalDataFor(player, id("permission"), NbtByte.TYPE);
@@ -59,8 +59,8 @@ public class ServerPlayNetworkHandlerMixin implements NicknameHolder {
     @Override
     public void sn_set(String nickname, boolean requirePermission) {
         Config config = ConfigManager.getConfig();
-
-        if (nickname == null || nickname.isEmpty()) {
+        ServerCommandSource source = player.getCommandSource();
+        if (nickname == null || nickname.isEmpty() || !(requirePermission && Permissions.check(source, "stylednicknames.use", 3))) {
             this.sn_nickname = null;
             this.sn_requirePermission = false;
             this.sn_parsedNickname = null;
@@ -73,7 +73,6 @@ public class ServerPlayNetworkHandlerMixin implements NicknameHolder {
             PlayerDataApi.setGlobalDataFor(this.player, id("permission"), NbtByte.of(requirePermission));
 
             HashMap<String, TextParser.TextFormatterHandler> handlers = new HashMap<>();
-            ServerCommandSource source = player.getCommandSource();
 
             for (Map.Entry<String, TextParser.TextFormatterHandler> entry : TextParser.getRegisteredTags().entrySet()) {
                 if (!entry.getKey().equals("click")
