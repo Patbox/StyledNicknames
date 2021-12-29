@@ -60,7 +60,7 @@ public class ServerPlayNetworkHandlerMixin implements NicknameHolder {
     public void sn_set(String nickname, boolean requirePermission) {
         Config config = ConfigManager.getConfig();
         ServerCommandSource source = player.getCommandSource();
-        if (nickname == null || nickname.isEmpty() || !(requirePermission && Permissions.check(source, "stylednicknames.use", 3))) {
+        if (nickname == null || nickname.isEmpty() || (requirePermission && !Permissions.check(source, "stylednicknames.use", ConfigManager.getConfig().configData.allowByDefault ? 0 : 2))) {
             this.sn_nickname = null;
             this.sn_requirePermission = false;
             this.sn_parsedNickname = null;

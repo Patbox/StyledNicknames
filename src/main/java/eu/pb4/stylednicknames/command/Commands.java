@@ -123,7 +123,7 @@ public class Commands {
         EntitySelector selector = context.getArgument("player", EntitySelector.class);
         ServerPlayerEntity player = selector.getPlayer(context.getSource());
         NicknameHolder.of(player).sn_set(context.getArgument("nickname", String.class), false);
-        context.getSource().sendFeedback(new TranslatableText("Changed nickname of %s to %s", player.getName()), false);
+        context.getSource().sendFeedback(new TranslatableText("Changed nickname of %s to %s", player.getName(), NicknameHolder.of(player).sn_getOutputOrVanilla()), false);
         return 0;
     }
 
