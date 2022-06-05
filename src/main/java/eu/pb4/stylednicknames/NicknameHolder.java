@@ -2,7 +2,6 @@ package eu.pb4.stylednicknames;
 
 import net.minecraft.server.network.ServerPlayNetworkHandler;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
@@ -30,7 +29,7 @@ public interface NicknameHolder {
 
         @Override
         public MutableText sn_getOutputOrVanilla() {
-            return LiteralText.EMPTY.shallowCopy();
+            return Text.empty();
         }
 
         @Override

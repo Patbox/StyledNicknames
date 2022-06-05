@@ -1,16 +1,16 @@
 package eu.pb4.stylednicknames.config.data;
 
-import eu.pb4.placeholders.TextParser;
+import eu.pb4.placeholders.api.parsers.TextParserV1;
 import eu.pb4.stylednicknames.config.ConfigManager;
 
+import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 public class ConfigData {
     public int CONFIG_VERSION_DONT_TOUCH_THIS = ConfigManager.VERSION;
     public String _comment = "Before changing anything, see https://github.com/Patbox/StyledNicknames#configuration";
     public boolean allowByDefault = false;
-    public String defaultPrefix = "#";
+    public String nicknameFormat = "#${name}";
     public int maxLength = 32;
     public boolean changeDisplayName = true;
     public boolean changePlayerListName = false;
@@ -20,18 +20,34 @@ public class ConfigData {
     public HashMap<String, Boolean> defaultEnabledFormatting = getDefaultFormatting();
     public String tooLongMessage = "This nickname is too long!";
 
+    @Deprecated
+    public String defaultPrefix = null;
+
     private static HashMap<String, Boolean> getDefaultFormatting() {
         HashMap<String, Boolean> map = new HashMap<>();
-        for (String string : TextParser.getRegisteredSafeTags().keySet()) {
-            map.put(string, false);
+        for (var tag : TextParserV1.SAFE.getTags()) {
+            map.put(tag.name(), false);
         }
         return map;
     }
 
     public static ConfigData transform(ConfigData configData) {
-        for (Map.Entry<String, Boolean> entry : getDefaultFormatting().entrySet()) {
+        var def = getDefaultFormatting();
+        for (var entry : def.entrySet()) {
             configData.defaultEnabledFormatting.putIfAbsent(entry.getKey(), entry.getValue());
         }
+
+        for (var e : new ArrayList<>(configData.defaultEnabledFormatting.keySet())) {
+            if (!def.containsKey(e)) {
+                configData.defaultEnabledFormatting.remove(e);
+            }
+        }
+
+        if (configData.defaultPrefix != null) {
+            configData.nicknameFormat = configData.defaultPrefix + "<r>" + "${nickname}";
+            configData.defaultPrefix = null;
+        }
+
         return configData;
     }
 }

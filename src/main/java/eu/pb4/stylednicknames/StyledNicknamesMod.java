@@ -1,9 +1,9 @@
 package eu.pb4.stylednicknames;
 
+import eu.pb4.placeholders.api.PlaceholderResult;
+import eu.pb4.placeholders.api.Placeholders;
 import eu.pb4.stylednicknames.command.Commands;
 import eu.pb4.stylednicknames.config.ConfigManager;
-import eu.pb4.placeholders.PlaceholderAPI;
-import eu.pb4.placeholders.PlaceholderResult;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerLifecycleEvents;
 import net.fabricmc.loader.api.FabricLoader;
@@ -27,12 +27,12 @@ public class StyledNicknamesMod implements ModInitializer {
 			ConfigManager.loadConfig();
 		});
 
-		PlaceholderAPI.register(new Identifier("styled-nicknames","display_name"), (ctx) -> {
+		Placeholders.register(new Identifier("styled-nicknames","display_name"), (ctx, arg) -> {
 			if (ctx.hasPlayer()) {
-				if (ctx.getPlayer().networkHandler != null) {
-					return PlaceholderResult.value(NicknameHolder.of(ctx.getPlayer().networkHandler).sn_getOutputOrVanilla());
+				if (ctx.player().networkHandler != null) {
+					return PlaceholderResult.value(NicknameHolder.of(ctx.player().networkHandler).sn_getOutputOrVanilla());
 				} else {
-					return PlaceholderResult.value(ctx.getPlayer().getName());
+					return PlaceholderResult.value(ctx.player().getName());
 				}
 			} else {
 				return PlaceholderResult.invalid("Not a player!");
