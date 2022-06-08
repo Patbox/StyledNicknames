@@ -115,12 +115,12 @@ public class ServerPlayNetworkHandlerMixin implements NicknameHolder {
 
     @Override
     public @Nullable MutableText sn_getOutput() {
-        return this.sn_parsedNickname != null ? (MutableText) Placeholders.parseText(ConfigManager.getConfig().nicknameFormat, Placeholders.PREDEFINED_PLACEHOLDER_PATTERN, Map.of("nickname", this.sn_parsedNickname)) : null;
+        return this.sn_parsedNickname != null ? (MutableText) Placeholders.parseText(ConfigManager.getConfig().nicknameFormat, Placeholders.PREDEFINED_PLACEHOLDER_PATTERN, Map.of("nickname", this.sn_parsedNickname, "name", this.sn_parsedNickname)) : null;
     }
 
     @Override
     public MutableText sn_getOutputOrVanilla() {
-        return this.sn_parsedNickname != null ? (MutableText) Placeholders.parseText(ConfigManager.getConfig().nicknameFormat, Placeholders.PREDEFINED_PLACEHOLDER_PATTERN, Map.of("nickname", this.sn_parsedNickname)) : this.player.getName().copy();
+        return this.sn_parsedNickname != null ? (MutableText) Placeholders.parseText(ConfigManager.getConfig().nicknameFormat, Placeholders.PREDEFINED_PLACEHOLDER_PATTERN, Map.of("nickname", this.sn_parsedNickname, "name", this.sn_parsedNickname)) : this.player.getName().copy();
     }
 
     @Override
