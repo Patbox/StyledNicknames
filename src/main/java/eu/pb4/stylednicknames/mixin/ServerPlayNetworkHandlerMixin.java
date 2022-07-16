@@ -36,7 +36,7 @@ public class ServerPlayNetworkHandlerMixin implements NicknameHolder {
     @Unique
     private String sn_nickname = null;
     @Unique
-    private Text sn_parsedNickname = null;
+    private Text sn_parsedNicknameRaw = null;
     @Unique
     private boolean sn_requirePermission = true;
 
@@ -61,7 +61,7 @@ public class ServerPlayNetworkHandlerMixin implements NicknameHolder {
         if (nickname == null || nickname.isEmpty() || (requirePermission && !Permissions.check(source, "stylednicknames.use", ConfigManager.getConfig().configData.allowByDefault ? 0 : 2))) {
             this.sn_nickname = null;
             this.sn_requirePermission = false;
-            this.sn_parsedNickname = null;
+            this.sn_parsedNicknameRaw = null;
             PlayerDataApi.setGlobalDataFor(this.player, id("nickname"), null);
             PlayerDataApi.setGlobalDataFor(this.player, id("permission"), NbtByte.of(false));
         } else {
@@ -95,7 +95,7 @@ public class ServerPlayNetworkHandlerMixin implements NicknameHolder {
                 }
             }
 
-            this.sn_parsedNickname = TextParserUtils.formatText(nickname, handlers::get);
+            this.sn_parsedNicknameRaw = TextParserUtils.formatText(nickname, handlers::get);
         }
 
         if (config.configData.changePlayerListName) {
@@ -110,17 +110,17 @@ public class ServerPlayNetworkHandlerMixin implements NicknameHolder {
 
     @Override
     public @Nullable Text sn_getParsed() {
-        return this.sn_parsedNickname;
+        return this.sn_parsedNicknameRaw;
     }
 
     @Override
     public @Nullable MutableText sn_getOutput() {
-        return this.sn_parsedNickname != null ? (MutableText) Placeholders.parseText(ConfigManager.getConfig().nicknameFormat, Placeholders.PREDEFINED_PLACEHOLDER_PATTERN, Map.of("nickname", this.sn_parsedNickname, "name", this.sn_parsedNickname)) : null;
+        return this.sn_parsedNicknameRaw != null ? (MutableText) Placeholders.parseText(ConfigManager.getConfig().nicknameFormat, Placeholders.PREDEFINED_PLACEHOLDER_PATTERN, Map.of("nickname", this.sn_parsedNicknameRaw, "name", this.sn_parsedNicknameRaw)) : null;
     }
 
     @Override
     public MutableText sn_getOutputOrVanilla() {
-        return this.sn_parsedNickname != null ? (MutableText) Placeholders.parseText(ConfigManager.getConfig().nicknameFormat, Placeholders.PREDEFINED_PLACEHOLDER_PATTERN, Map.of("nickname", this.sn_parsedNickname, "name", this.sn_parsedNickname)) : this.player.getName().copy();
+        return this.sn_parsedNicknameRaw != null ? (MutableText) Placeholders.parseText(ConfigManager.getConfig().nicknameFormat, Placeholders.PREDEFINED_PLACEHOLDER_PATTERN, Map.of("nickname", this.sn_parsedNicknameRaw, "name", this.sn_parsedNicknameRaw)) : this.player.getName().copy();
     }
 
     @Override
@@ -130,6 +130,12 @@ public class ServerPlayNetworkHandlerMixin implements NicknameHolder {
 
     @Override
     public boolean sn_shouldDisplay() {
-        return this.sn_parsedNickname != null && (!this.sn_requirePermission || Permissions.check(this.player, "stylednicknames.use", ConfigManager.getConfig().configData.allowByDefault ? 0 : 3));
+        return this.sn_parsedNicknameRaw != null && (!this.sn_requirePermission || Permissions.check(this.player, "stylednicknames.use", ConfigManager.getConfig().configData.allowByDefault ? 0 : 3));
+    }
+
+    @Override
+    public Map<String, Text> sn_placeholdersCommand() {
+        var name = this.sn_getOutputOrVanilla();
+        return Map.of("nickname", name, "name", name);
     }
 }

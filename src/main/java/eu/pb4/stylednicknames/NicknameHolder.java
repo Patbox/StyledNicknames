@@ -6,6 +6,8 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Text;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Map;
+
 public interface NicknameHolder {
     NicknameHolder EMPTY = new NicknameHolder() {
         @Override
@@ -44,6 +46,11 @@ public interface NicknameHolder {
         public boolean sn_shouldDisplay() {
             return false;
         }
+
+        @Override
+        public Map<String, Text> sn_placeholdersCommand() {
+            return Map.of("nickname", Text.empty(), "name", Text.empty());
+        }
     };
 
     static NicknameHolder of(ServerPlayerEntity player) {
@@ -79,4 +86,6 @@ public interface NicknameHolder {
     void sn_loadData();
 
     boolean sn_shouldDisplay();
+
+    Map<String, Text> sn_placeholdersCommand();
 }

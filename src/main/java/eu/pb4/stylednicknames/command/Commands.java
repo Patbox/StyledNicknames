@@ -112,7 +112,7 @@ public class Commands {
 
         holder.sn_set(nickname, true);
         context.getSource().sendFeedback(
-                Placeholders.parseText(ConfigManager.getConfig().changeText, Placeholders.PREDEFINED_PLACEHOLDER_PATTERN, Map.of("nickname", holder.sn_getOutputOrVanilla())),
+                Placeholders.parseText(ConfigManager.getConfig().changeText, Placeholders.PREDEFINED_PLACEHOLDER_PATTERN, holder.sn_placeholdersCommand()),
                 false);
         return 0;
     }
@@ -120,7 +120,10 @@ public class Commands {
     private static int reset(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         NicknameHolder.of(context.getSource().getPlayer()).sn_set(null, false);
         context.getSource().sendFeedback(
-                Placeholders.parseText(ConfigManager.getConfig().resetText, Placeholders.PREDEFINED_PLACEHOLDER_PATTERN, Map.of("nickname", context.getSource().getPlayer().getName())),
+                Placeholders.parseText(ConfigManager.getConfig().resetText, Placeholders.PREDEFINED_PLACEHOLDER_PATTERN, Map.of(
+                        "nickname", context.getSource().getPlayer().getName(),
+                        "name", context.getSource().getPlayer().getName()
+                )),
                 false);
         return 0;
     }

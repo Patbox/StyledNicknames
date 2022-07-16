@@ -10,7 +10,7 @@ public class ConfigData {
     public int CONFIG_VERSION_DONT_TOUCH_THIS = ConfigManager.VERSION;
     public String _comment = "Before changing anything, see https://github.com/Patbox/StyledNicknames#configuration";
     public boolean allowByDefault = false;
-    public String nicknameFormat = "#${name}";
+    public String nicknameFormat = "#${nickname}";
     public int maxLength = 32;
     public boolean changeDisplayName = true;
     public boolean changePlayerListName = false;
