@@ -11,44 +11,44 @@ import java.util.Map;
 public interface NicknameHolder {
     NicknameHolder EMPTY = new NicknameHolder() {
         @Override
-        public void sn_set(String nickname, boolean requirePermission) {
+        public void styledNicknames$set(String nickname, boolean requirePermission) {
         }
 
         @Override
-        public @Nullable String sn_get() {
+        public @Nullable String styledNicknames$get() {
             return null;
         }
 
         @Override
-        public @Nullable Text sn_getParsed() {
+        public @Nullable Text styledNicknames$getParsed() {
             return null;
         }
 
         @Override
-        public @Nullable MutableText sn_getOutput() {
+        public @Nullable MutableText styledNicknames$getOutput() {
             return null;
         }
 
         @Override
-        public MutableText sn_getOutputOrVanilla() {
+        public MutableText styledNicknames$getOutputOrVanilla() {
             return Text.empty();
         }
 
         @Override
-        public boolean sn_requiresPermission() {
+        public boolean styledNicknames$requiresPermission() {
             return false;
         }
 
         @Override
-        public void sn_loadData() {}
+        public void styledNicknames$loadData() {}
 
         @Override
-        public boolean sn_shouldDisplay() {
+        public boolean styledNicknames$shouldDisplay() {
             return false;
         }
 
         @Override
-        public Map<String, Text> sn_placeholdersCommand() {
+        public Map<String, Text> styledNicknames$placeholdersCommand() {
             return Map.of("nickname", Text.empty(), "name", Text.empty());
         }
     };
@@ -68,24 +68,37 @@ public interface NicknameHolder {
         return EMPTY;
     }
 
-    void sn_set(String nickname, boolean requirePermission);
+    void styledNicknames$set(String nickname, boolean requirePermission);
 
     @Nullable
-    String sn_get();
+    String styledNicknames$get();
 
     @Nullable
-    Text sn_getParsed();
+    Text styledNicknames$getParsed();
 
     @Nullable
-    MutableText sn_getOutput();
+    MutableText styledNicknames$getOutput();
 
-    MutableText sn_getOutputOrVanilla();
+    MutableText styledNicknames$getOutputOrVanilla();
 
-    boolean sn_requiresPermission();
+    boolean styledNicknames$requiresPermission();
 
-    void sn_loadData();
+    void styledNicknames$loadData();
 
-    boolean sn_shouldDisplay();
+    boolean styledNicknames$shouldDisplay();
 
-    Map<String, Text> sn_placeholdersCommand();
+    Map<String, Text> styledNicknames$placeholdersCommand();
+
+
+    // Kept for switchy so it won't break
+    @Deprecated
+    default String sn_get() {
+        return this.styledNicknames$get();
+    }
+
+    // Kept for switchy so it won't break
+    @Deprecated
+    default void sn_set(String input, boolean permission) {
+        this.styledNicknames$set(input, permission);
+    }
 }

@@ -110,15 +110,15 @@ public class Commands {
             }
         }
 
-        holder.sn_set(nickname, true);
+        holder.styledNicknames$set(nickname, true);
         context.getSource().sendFeedback(
-                Placeholders.parseText(ConfigManager.getConfig().changeText, Placeholders.PREDEFINED_PLACEHOLDER_PATTERN, holder.sn_placeholdersCommand()),
+                Placeholders.parseText(ConfigManager.getConfig().changeText, Placeholders.PREDEFINED_PLACEHOLDER_PATTERN, holder.styledNicknames$placeholdersCommand()),
                 false);
         return 0;
     }
 
     private static int reset(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-        NicknameHolder.of(context.getSource().getPlayer()).sn_set(null, false);
+        NicknameHolder.of(context.getSource().getPlayer()).styledNicknames$set(null, false);
         context.getSource().sendFeedback(
                 Placeholders.parseText(ConfigManager.getConfig().resetText, Placeholders.PREDEFINED_PLACEHOLDER_PATTERN, Map.of(
                         "nickname", context.getSource().getPlayer().getName(),
@@ -131,15 +131,15 @@ public class Commands {
     private static int changeOther(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         EntitySelector selector = context.getArgument("player", EntitySelector.class);
         ServerPlayerEntity player = selector.getPlayer(context.getSource());
-        NicknameHolder.of(player).sn_set(context.getArgument("nickname", String.class), false);
-        context.getSource().sendFeedback(Text.translatable("Changed nickname of %s to %s", player.getName(), NicknameHolder.of(player).sn_getOutputOrVanilla()), false);
+        NicknameHolder.of(player).styledNicknames$set(context.getArgument("nickname", String.class), false);
+        context.getSource().sendFeedback(Text.translatable("Changed nickname of %s to %s", player.getName(), NicknameHolder.of(player).styledNicknames$getOutputOrVanilla()), false);
         return 0;
     }
 
     private static int resetOther(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         EntitySelector selector = context.getArgument("player", EntitySelector.class);
         ServerPlayerEntity player = selector.getPlayer(context.getSource());
-        NicknameHolder.of(player).sn_set(null, false);
+        NicknameHolder.of(player).styledNicknames$set(null, false);
         context.getSource().sendFeedback(Text.translatable("Cleared nickname of %s", player.getName()), false);
         return 0;
     }

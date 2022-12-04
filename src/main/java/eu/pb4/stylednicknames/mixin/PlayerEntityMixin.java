@@ -12,23 +12,23 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 @Mixin(PlayerEntity.class)
 public abstract class PlayerEntityMixin {
-    @Unique boolean sn_ignoreNextCall = false;
+    @Unique boolean styledNicknames$ignoreNextCall = false;
 
     @ModifyArg(method = "getDisplayName", at = @At(value = "INVOKE", target = "Lnet/minecraft/scoreboard/Team;decorateName(Lnet/minecraft/scoreboard/AbstractTeam;Lnet/minecraft/text/Text;)Lnet/minecraft/text/MutableText;"))
-    private Text replaceName(Text text) {
+    private Text styledNicknames$replaceName(Text text) {
         try {
             if (ConfigManager.isEnabled() && ConfigManager.getConfig().configData.changeDisplayName) {
-                if (!this.sn_ignoreNextCall) {
-                    this.sn_ignoreNextCall = true;
+                if (!this.styledNicknames$ignoreNextCall) {
+                    this.styledNicknames$ignoreNextCall = true;
                     var holder = NicknameHolder.of(this);
-                    if (holder != null && holder.sn_shouldDisplay()) {
-                        Text name = holder.sn_getOutput();
+                    if (holder != null && holder.styledNicknames$shouldDisplay()) {
+                        Text name = holder.styledNicknames$getOutput();
                         if (name != null) {
-                            this.sn_ignoreNextCall = false;
+                            this.styledNicknames$ignoreNextCall = false;
                             return name;
                         }
                     }
-                    this.sn_ignoreNextCall = false;
+                    this.styledNicknames$ignoreNextCall = false;
                 }
             }
         } catch (Exception e) {

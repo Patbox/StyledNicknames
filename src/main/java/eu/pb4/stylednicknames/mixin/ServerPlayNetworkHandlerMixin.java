@@ -34,20 +34,20 @@ public class ServerPlayNetworkHandlerMixin implements NicknameHolder {
     @Shadow
     public ServerPlayerEntity player;
     @Unique
-    private String sn_nickname = null;
+    private String styledNicknames$nickname = null;
     @Unique
-    private Text sn_parsedNicknameRaw = null;
+    private Text styledNicknames$parsedNicknameRaw = null;
     @Unique
-    private boolean sn_requirePermission = true;
+    private boolean styledNicknames$requirePermission = true;
 
     @Override
-    public void sn_loadData() {
+    public void styledNicknames$loadData() {
         try {
             NbtString nickname = PlayerDataApi.getGlobalDataFor(player, id("nickname"), NbtString.TYPE);
             NbtByte permissions = PlayerDataApi.getGlobalDataFor(player, id("permission"), NbtByte.TYPE);
 
             if (nickname != null) {
-                this.sn_set(nickname.asString(), permissions.byteValue() > 0);
+                this.styledNicknames$set(nickname.asString(), permissions.byteValue() > 0);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -55,18 +55,18 @@ public class ServerPlayNetworkHandlerMixin implements NicknameHolder {
     }
 
     @Override
-    public void sn_set(String nickname, boolean requirePermission) {
+    public void styledNicknames$set(String nickname, boolean requirePermission) {
         Config config = ConfigManager.getConfig();
         ServerCommandSource source = player.getCommandSource();
         if (nickname == null || nickname.isEmpty() || (requirePermission && !Permissions.check(source, "stylednicknames.use", ConfigManager.getConfig().configData.allowByDefault ? 0 : 2))) {
-            this.sn_nickname = null;
-            this.sn_requirePermission = false;
-            this.sn_parsedNicknameRaw = null;
+            this.styledNicknames$nickname = null;
+            this.styledNicknames$requirePermission = false;
+            this.styledNicknames$parsedNicknameRaw = null;
             PlayerDataApi.setGlobalDataFor(this.player, id("nickname"), null);
             PlayerDataApi.setGlobalDataFor(this.player, id("permission"), NbtByte.of(false));
         } else {
-            this.sn_nickname = nickname;
-            this.sn_requirePermission = requirePermission;
+            this.styledNicknames$nickname = nickname;
+            this.styledNicknames$requirePermission = requirePermission;
             PlayerDataApi.setGlobalDataFor(this.player, id("nickname"), NbtString.of(nickname));
             PlayerDataApi.setGlobalDataFor(this.player, id("permission"), NbtByte.of(requirePermission));
 
@@ -95,7 +95,7 @@ public class ServerPlayNetworkHandlerMixin implements NicknameHolder {
                 }
             }
 
-            this.sn_parsedNicknameRaw = TextParserUtils.formatText(nickname, handlers::get);
+            this.styledNicknames$parsedNicknameRaw = TextParserUtils.formatText(nickname, handlers::get);
         }
 
         if (config.configData.changePlayerListName) {
@@ -104,38 +104,38 @@ public class ServerPlayNetworkHandlerMixin implements NicknameHolder {
     }
 
     @Override
-    public @Nullable String sn_get() {
-        return this.sn_nickname;
+    public @Nullable String styledNicknames$get() {
+        return this.styledNicknames$nickname;
     }
 
     @Override
-    public @Nullable Text sn_getParsed() {
-        return this.sn_parsedNicknameRaw;
+    public @Nullable Text styledNicknames$getParsed() {
+        return this.styledNicknames$parsedNicknameRaw;
     }
 
     @Override
-    public @Nullable MutableText sn_getOutput() {
-        return this.sn_parsedNicknameRaw != null ? (MutableText) Placeholders.parseText(ConfigManager.getConfig().nicknameFormat, Placeholders.PREDEFINED_PLACEHOLDER_PATTERN, Map.of("nickname", this.sn_parsedNicknameRaw, "name", this.sn_parsedNicknameRaw)) : null;
+    public @Nullable MutableText styledNicknames$getOutput() {
+        return this.styledNicknames$parsedNicknameRaw != null ? (MutableText) Placeholders.parseText(ConfigManager.getConfig().nicknameFormat, Placeholders.PREDEFINED_PLACEHOLDER_PATTERN, Map.of("nickname", this.styledNicknames$parsedNicknameRaw, "name", this.styledNicknames$parsedNicknameRaw)) : null;
     }
 
     @Override
-    public MutableText sn_getOutputOrVanilla() {
-        return this.sn_parsedNicknameRaw != null ? (MutableText) Placeholders.parseText(ConfigManager.getConfig().nicknameFormat, Placeholders.PREDEFINED_PLACEHOLDER_PATTERN, Map.of("nickname", this.sn_parsedNicknameRaw, "name", this.sn_parsedNicknameRaw)) : this.player.getName().copy();
+    public MutableText styledNicknames$getOutputOrVanilla() {
+        return this.styledNicknames$parsedNicknameRaw != null ? (MutableText) Placeholders.parseText(ConfigManager.getConfig().nicknameFormat, Placeholders.PREDEFINED_PLACEHOLDER_PATTERN, Map.of("nickname", this.styledNicknames$parsedNicknameRaw, "name", this.styledNicknames$parsedNicknameRaw)) : this.player.getName().copy();
     }
 
     @Override
-    public boolean sn_requiresPermission() {
-        return this.sn_requirePermission;
+    public boolean styledNicknames$requiresPermission() {
+        return this.styledNicknames$requirePermission;
     }
 
     @Override
-    public boolean sn_shouldDisplay() {
-        return this.sn_parsedNicknameRaw != null && (!this.sn_requirePermission || Permissions.check(this.player, "stylednicknames.use", ConfigManager.getConfig().configData.allowByDefault ? 0 : 3));
+    public boolean styledNicknames$shouldDisplay() {
+        return this.styledNicknames$parsedNicknameRaw != null && (!this.styledNicknames$requirePermission || Permissions.check(this.player, "stylednicknames.use", ConfigManager.getConfig().configData.allowByDefault ? 0 : 3));
     }
 
     @Override
-    public Map<String, Text> sn_placeholdersCommand() {
-        var name = this.sn_getOutputOrVanilla();
+    public Map<String, Text> styledNicknames$placeholdersCommand() {
+        var name = this.styledNicknames$getOutputOrVanilla();
         return Map.of("nickname", name, "name", name);
     }
 }

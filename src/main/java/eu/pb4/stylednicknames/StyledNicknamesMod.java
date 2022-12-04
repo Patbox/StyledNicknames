@@ -30,7 +30,7 @@ public class StyledNicknamesMod implements ModInitializer {
 		Placeholders.register(new Identifier("styled-nicknames","display_name"), (ctx, arg) -> {
 			if (ctx.hasPlayer()) {
 				if (ctx.player().networkHandler != null) {
-					return PlaceholderResult.value(NicknameHolder.of(ctx.player().networkHandler).sn_getOutputOrVanilla());
+					return PlaceholderResult.value(NicknameHolder.of(ctx.player().networkHandler).styledNicknames$getOutputOrVanilla());
 				} else {
 					return PlaceholderResult.value(ctx.player().getName());
 				}
