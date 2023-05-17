@@ -11,8 +11,10 @@ import eu.pb4.placeholders.api.parsers.TextParserV1;
 import eu.pb4.stylednicknames.NicknameHolder;
 import eu.pb4.stylednicknames.StyledNicknamesMod;
 import eu.pb4.stylednicknames.config.ConfigManager;
+import me.drex.vanish.api.VanishAPI;
 import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.server.command.ServerCommandSource;
@@ -28,6 +30,7 @@ import static net.minecraft.server.command.CommandManager.argument;
 import static net.minecraft.server.command.CommandManager.literal;
 
 public class Commands {
+    public static final boolean VANISH = FabricLoader.getInstance().isModLoaded("melius-vanish");
     public static void register() {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             dispatcher.register(
@@ -159,7 +162,7 @@ public class Commands {
         for (ServerPlayerEntity player : players) {
             MutableText output = NicknameHolder.of(player).styledNicknames$getOutput();
             if (output == null) continue;
-            if (output.getString().equals(nickname)) {
+            if (output.getString().equals(nickname) && canSeePlayer(player, context.getSource())) {
                 foundPlayers.put(player, output);
             }
         }
@@ -217,14 +220,21 @@ public class Commands {
         return Collections.emptyList();
     }
 
-    private static final SuggestionProvider<ServerCommandSource> NICKNAME_PROVIDER = (source, builder) -> {
-        List<ServerPlayerEntity> players = source.getSource().getServer().getPlayerManager().getPlayerList();
+    private static boolean canSeePlayer(ServerPlayerEntity player, ServerCommandSource viewing) {
+        if (VANISH) {
+            return VanishAPI.canSeePlayer(player.server, player.getUuid(), viewing);
+        }
+        return true;
+    }
+
+    private static final SuggestionProvider<ServerCommandSource> NICKNAME_PROVIDER = (context, builder) -> {
+        List<ServerPlayerEntity> players = context.getSource().getServer().getPlayerManager().getPlayerList();
         Set<String> nicknames = players.stream()
+                .filter(player -> canSeePlayer(player, context.getSource()))
                 .map(player -> NicknameHolder.of(player).styledNicknames$getOutput())
                 .filter(Objects::nonNull)
                 .map(Text::getString)
                 .collect(Collectors.toSet());
-
         return CommandSource.suggestMatching(nicknames, builder);
     };
 
