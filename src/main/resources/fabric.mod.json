@@ -19,6 +19,9 @@
   "entrypoints": {
     "main": [
       "eu.pb4.stylednicknames.StyledNicknamesMod"
+    ],
+    "preLaunch": [
+      "eu.pb4.stylednicknames.CardboardWarning"
     ]
   },
   "mixins": [
