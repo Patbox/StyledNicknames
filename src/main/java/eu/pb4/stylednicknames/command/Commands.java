@@ -174,7 +174,7 @@ public class Commands {
                 context.getSource().sendFeedback(() -> Text.translatable("Found %s players with that nickname:", foundPlayers.size()), false);
             }
             foundPlayers.forEach((serverPlayerEntity, mutableText) -> {
-                        context.getSource().sendFeedback(() -> Text.translatable("The real name of %s is %s.", serverPlayerEntity.getDisplayName(), serverPlayerEntity.getEntityName()), false);
+                        context.getSource().sendFeedback(() -> Text.translatable("The real name of %s is %s.", serverPlayerEntity.getDisplayName(), serverPlayerEntity.getNameForScoreboard()), false);
                     }
             );
         }
