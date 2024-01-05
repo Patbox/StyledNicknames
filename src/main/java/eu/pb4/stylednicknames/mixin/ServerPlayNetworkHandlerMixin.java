@@ -4,6 +4,7 @@ import eu.pb4.placeholders.api.Placeholders;
 import eu.pb4.placeholders.api.TextParserUtils;
 import eu.pb4.placeholders.api.parsers.TextParserV1;
 import eu.pb4.playerdata.api.PlayerDataApi;
+import eu.pb4.stylednicknames.NicknameCache;
 import eu.pb4.stylednicknames.NicknameHolder;
 import eu.pb4.stylednicknames.config.Config;
 import eu.pb4.stylednicknames.config.ConfigManager;
@@ -101,6 +102,7 @@ public class ServerPlayNetworkHandlerMixin implements NicknameHolder {
         if (config.configData.changePlayerListName) {
             Objects.requireNonNull(this.player.getServer()).getPlayerManager().sendToAll(new PlayerListS2CPacket(PlayerListS2CPacket.Action.UPDATE_DISPLAY_NAME, this.player));
         }
+        ((NicknameCache) this.player).styledNicknames$invalidateCache();
     }
 
     @Override
