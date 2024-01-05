@@ -1,6 +1,7 @@
 package eu.pb4.stylednicknames.mixin;
 
 import eu.pb4.stylednicknames.NicknameHolder;
+import eu.pb4.stylednicknames.NicknameCache;
 import eu.pb4.stylednicknames.config.ConfigManager;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -14,7 +15,7 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 
 
 @Mixin(PlayerEntity.class)
-public abstract class PlayerEntityMixin extends LivingEntity {
+public abstract class PlayerEntityMixin extends LivingEntity implements NicknameCache {
     @Unique private boolean styledNicknames$ignoreNextCall = false;
     @Unique private Text styledNicknames$cachedName = null;
     @Unique private int styledNicknames$cachedAge = -999;
@@ -52,4 +53,9 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         return text;
     }
 
+    @Override
+    public void styledNicknames$invalidateCache() {
+        this.styledNicknames$cachedName = null;
+        this.styledNicknames$cachedAge = - 999;
+    }
 }
