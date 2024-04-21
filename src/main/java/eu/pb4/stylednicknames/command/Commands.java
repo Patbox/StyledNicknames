@@ -5,11 +5,11 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
-import eu.pb4.placeholders.api.Placeholders;
-import eu.pb4.placeholders.api.TextParserUtils;
-import eu.pb4.placeholders.api.parsers.TextParserV1;
+import eu.pb4.placeholders.api.ParserContext;
 import eu.pb4.stylednicknames.NicknameHolder;
+import eu.pb4.stylednicknames.ParserUtils;
 import eu.pb4.stylednicknames.StyledNicknamesMod;
+import eu.pb4.stylednicknames.config.Config;
 import eu.pb4.stylednicknames.config.ConfigManager;
 import me.drex.vanish.api.VanishAPI;
 import me.lucko.fabric.api.permissions.v0.Permissions;
@@ -93,30 +93,8 @@ public class Commands {
         var config = ConfigManager.getConfig();
         var nickname = context.getArgument("nickname", String.class);
         if (config.configData.maxLength > 0) {
-            Map<String, TextParserV1.TagNodeBuilder> handlers = new HashMap<>();
-            for (var entry : TextParserV1.SAFE.getTags()) {
-                if ((config.defaultFormattingCodes.getBoolean(entry.name())
-                        || Permissions.check(context.getSource(), "stylednicknames.format." + entry.name(), 2))) {
-
-                    handlers.put(entry.name(), entry.parser());
-
-                    if (entry.aliases() != null) {
-                        for (var a : entry.aliases()) {
-                            handlers.put(a, entry.parser());
-                        }
-                    }
-                }
-            }
-
-            if (config.configData.allowLegacyFormatting) {
-                for (Formatting formatting : Formatting.values()) {
-                    if (handlers.get(formatting.getName()) != null) {
-                        nickname = nickname.replace(String.copyValueOf(new char[]{'&', formatting.getCode()}), "<" + formatting.getName() + ">");
-                    }
-                }
-            }
-
-            var output = TextParserUtils.formatText(nickname, handlers::get);
+            var parser = ParserUtils.getParser(context.getSource().getPlayerOrThrow());
+            var output = parser.parseText(nickname, ParserContext.of());
 
             if (output.getString().length() > config.configData.maxLength && !Permissions.check(context.getSource(), "stylednicknames.ignore_limit", 2)) {
                 context.getSource().sendFeedback(() -> ConfigManager.getConfig().tooLongText, false);
@@ -126,7 +104,7 @@ public class Commands {
 
         holder.styledNicknames$set(nickname, true);
         context.getSource().sendFeedback(() ->
-                        Placeholders.parseText(ConfigManager.getConfig().changeText, Placeholders.PREDEFINED_PLACEHOLDER_PATTERN, holder.styledNicknames$placeholdersCommand()),
+                        ConfigManager.getConfig().changeText.toText(ParserContext.of(Config.KEY, holder.styledNicknames$placeholdersCommand())),
                 false);
         return 0;
     }
@@ -134,9 +112,7 @@ public class Commands {
     private static int reset(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
         NicknameHolder.of(context.getSource().getPlayerOrThrow()).styledNicknames$set(null, false);
         context.getSource().sendFeedback(() ->
-                        Placeholders.parseText(ConfigManager.getConfig().resetText, Placeholders.PREDEFINED_PLACEHOLDER_PATTERN, Map.of(
-                                "nickname", context.getSource().getPlayer().getName(),
-                                "name", context.getSource().getPlayer().getName()
+                        ConfigManager.getConfig().resetText.toText(ParserContext.of(Config.KEY, (x) -> context.getSource().getPlayer().getName()
                         )),
                 false);
         return 0;
@@ -168,7 +144,7 @@ public class Commands {
             }
         }
         if (foundPlayers.isEmpty()) {
-            context.getSource().sendError(Text.translatable("No player with that nickname is currently online."));
+            context.getSource().sendError(Text.literal("No player with that nickname is currently online."));
         } else {
             if (foundPlayers.size() > 1) {
                 context.getSource().sendFeedback(() -> Text.translatable("Found %s players with that nickname:", foundPlayers.size()), false);

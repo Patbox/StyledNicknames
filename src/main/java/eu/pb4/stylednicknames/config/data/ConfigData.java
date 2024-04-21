@@ -1,6 +1,7 @@
 package eu.pb4.stylednicknames.config.data;
 
 import eu.pb4.placeholders.api.parsers.TextParserV1;
+import eu.pb4.placeholders.api.parsers.tag.TagRegistry;
 import eu.pb4.stylednicknames.config.ConfigManager;
 import net.minecraft.util.Formatting;
 
@@ -12,6 +13,7 @@ public class ConfigData {
     public String _comment = "Before changing anything, see https://github.com/Patbox/StyledNicknames#configuration";
     public boolean allowByDefault = true;
     public String nicknameFormat = "#${nickname}";
+    public String nicknameFormatColor = "${nickname}";
     public int maxLength = 48;
     public boolean changeDisplayName = true;
     public boolean changePlayerListName = false;
@@ -21,12 +23,9 @@ public class ConfigData {
     public HashMap<String, Boolean> defaultEnabledFormatting = getDefaultFormatting();
     public String tooLongMessage = "This nickname is too long!";
 
-    @Deprecated
-    public String defaultPrefix = null;
-
     private static HashMap<String, Boolean> getDefaultFormatting() {
         HashMap<String, Boolean> map = new HashMap<>();
-        for (var tag : TextParserV1.SAFE.getTags()) {
+        for (var tag : TagRegistry.SAFE.getTags()) {
             var color = Formatting.byName(tag.name());
             map.put(tag.name(), color != null && color != Formatting.BLACK);
         }
@@ -44,12 +43,6 @@ public class ConfigData {
                 configData.defaultEnabledFormatting.remove(e);
             }
         }
-
-        if (configData.defaultPrefix != null) {
-            configData.nicknameFormat = configData.defaultPrefix + "<r>" + "${nickname}";
-            configData.defaultPrefix = null;
-        }
-
         return configData;
     }
 }

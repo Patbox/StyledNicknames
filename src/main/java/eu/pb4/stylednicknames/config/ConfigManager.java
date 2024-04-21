@@ -11,7 +11,7 @@ import org.apache.commons.io.IOUtils;
 import java.io.*;
 
 public class ConfigManager {
-    public static final int VERSION = 1;
+    public static final int VERSION = 2;
     private static final Gson GSON = new GsonBuilder().setPrettyPrinting().disableHtmlEscaping().setLenient().create();
 
     private static Config CONFIG;
