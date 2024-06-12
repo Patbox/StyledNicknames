@@ -29,7 +29,7 @@ public class StyledNicknamesMod implements ModInitializer {
 			ConfigManager.loadConfig();
 		});
 
-		Placeholders.register(new Identifier("styled-nicknames","display_name"), (ctx, arg) -> {
+		Placeholders.register(Identifier.of("styled-nicknames","display_name"), (ctx, arg) -> {
 			if (ctx.hasPlayer()) {
 				if (ctx.player().networkHandler != null) {
 					return PlaceholderResult.value(NicknameHolder.of(ctx.player().networkHandler).styledNicknames$getOutputOrVanilla());
@@ -43,7 +43,7 @@ public class StyledNicknamesMod implements ModInitializer {
 	}
 
 	public static final Identifier id(String path) {
-		return new Identifier(ID, path);
+		return Identifier.of(ID, path);
 	}
 
 }
