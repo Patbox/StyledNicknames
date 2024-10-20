@@ -20,7 +20,7 @@ public class ParserUtils {
             var registry = TagRegistry.create();
             for (var entry : TagRegistry.SAFE.getTags()) {
                 if ((config.defaultFormattingCodes.getBoolean(entry.name())
-                        || Permissions.check(player, "stylednicknames.format." + entry.name(), 2))) {
+                        || Permissions.check(player.getCommandSource(), "stylednicknames.format." + entry.name(), 2))) {
                     registry.register(entry);
                 }
             }

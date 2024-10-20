@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.6.+'
+	id 'fabric-loom' version '1.7.+'
 	id 'maven-publish'
 	id "com.modrinth.minotaur" version "2.+"
 	id 'com.matthewprenger.cursegradle' version '1.4.0'
@@ -7,8 +7,8 @@ plugins {
 
 var isStable = project.is_stable == "true"
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
+sourceCompatibility = JavaVersion.VERSION_21
+targetCompatibility = JavaVersion.VERSION_21
 
 archivesBaseName = project.archives_base_name
 version = project.mod_version
@@ -39,7 +39,7 @@ dependencies {
 	modLocalRuntime("net.fabricmc.fabric-api:fabric-api:${project.fabric_version}")
 
 	//modImplementation include("eu.pb4:predicate-api:0.4.0+1.20.5")
-	modImplementation include("eu.pb4:placeholder-api:2.4.0-pre.2+1.21")
+	modImplementation include("eu.pb4:placeholder-api:2.5.0+1.21.2")
 	modImplementation include("me.lucko:fabric-permissions-api:0.3.1")
 	modImplementation include("eu.pb4:player-data-api:0.6.0+1.21")
 

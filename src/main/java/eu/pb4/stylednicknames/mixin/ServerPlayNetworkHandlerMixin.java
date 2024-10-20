@@ -116,7 +116,7 @@ public class ServerPlayNetworkHandlerMixin implements NicknameHolder {
 
     @Override
     public boolean styledNicknames$shouldDisplay() {
-        return this.styledNicknames$parsedNicknameRaw != null && (!this.styledNicknames$requirePermission || Permissions.check(this.player, "stylednicknames.use", ConfigManager.getConfig().configData.allowByDefault ? 0 : 3));
+        return this.styledNicknames$parsedNicknameRaw != null && (!this.styledNicknames$requirePermission || Permissions.check(this.player.getCommandSource(), "stylednicknames.use", ConfigManager.getConfig().configData.allowByDefault ? 0 : 3));
     }
 
     @Override
