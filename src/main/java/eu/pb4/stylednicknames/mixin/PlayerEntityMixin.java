@@ -32,6 +32,10 @@ public abstract class PlayerEntityMixin extends LivingEntity implements Nickname
                     return this.styledNicknames$cachedName;
                 }
 
+                if (this.getWorld().getServer() != null && !this.getWorld().getServer().isOnThread()) {
+                    return text;
+                }
+
                 if (!this.styledNicknames$ignoreNextCall) {
                     this.styledNicknames$ignoreNextCall = true;
                     var holder = NicknameHolder.of(this);

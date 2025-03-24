@@ -50,7 +50,7 @@ public class ServerPlayNetworkHandlerMixin implements NicknameHolder {
             NbtByte permissions = PlayerDataApi.getGlobalDataFor(player, id("permission"), NbtByte.TYPE);
 
             if (nickname != null) {
-                this.styledNicknames$set(nickname.asString(), permissions.byteValue() > 0);
+                this.styledNicknames$set(nickname.value(),  permissions != null && permissions.byteValue() > 0);
             }
         } catch (Exception e) {
             e.printStackTrace();
