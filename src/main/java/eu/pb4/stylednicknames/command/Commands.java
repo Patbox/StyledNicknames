@@ -102,6 +102,12 @@ public class Commands {
             }
         }
 
+        if(nickname.contains(" ") && !config.configData.allowSpacesInNicknames){
+            context.getSource().sendFeedback(() -> config.nicknameCantContainSpacesText, false);
+            return 1;
+        }
+
+
         holder.styledNicknames$set(nickname, true);
         context.getSource().sendFeedback(() ->
                         ConfigManager.getConfig().changeText.toText(ParserContext.of(Config.KEY, holder.styledNicknames$placeholdersCommand())),
