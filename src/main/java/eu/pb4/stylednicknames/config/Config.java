@@ -32,6 +32,7 @@ public final class Config {
     public final TextNode changeText;
     public final TextNode resetText;
     public final Text tooLongText;
+    public final Text nicknameCantContainSpacesText;
 
     public Config(ConfigData data) {
         this.configData = data;
@@ -40,6 +41,7 @@ public final class Config {
         this.changeText = PARSER.parseNode(data.nicknameChangedMessage);
         this.resetText = PARSER.parseNode(data.nicknameResetMessage);
         this.tooLongText = PARSER.parseText(data.tooLongMessage, ParserContext.of());
+        this.nicknameCantContainSpacesText = PARSER.parseText(data.nicknameCantContainSpacesMessage, ParserContext.of());
         this.defaultFormattingCodes = new Object2BooleanArrayMap<>(this.configData.defaultEnabledFormatting);
     }
 

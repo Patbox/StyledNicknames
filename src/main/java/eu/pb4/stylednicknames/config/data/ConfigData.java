@@ -22,6 +22,8 @@ public class ConfigData {
     public String nicknameResetMessage = "Your nickname has been removed!";
     public HashMap<String, Boolean> defaultEnabledFormatting = getDefaultFormatting();
     public String tooLongMessage = "This nickname is too long!";
+    public boolean allowSpacesInNicknames = false;
+    public String nicknameCantContainSpacesMessage = "Nickname can't contain spaces!";
 
     private static HashMap<String, Boolean> getDefaultFormatting() {
         HashMap<String, Boolean> map = new HashMap<>();
