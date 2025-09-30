@@ -199,7 +199,7 @@ public class Commands {
 
     private static boolean canSeePlayer(ServerPlayerEntity player, ServerCommandSource viewing) {
         if (VANISH) {
-            return VanishAPI.canSeePlayer(player.getServer(), player.getUuid(), viewing);
+            return VanishAPI.canSeePlayer(player.getEntityWorld().getServer(), player.getUuid(), viewing);
         }
         return true;
     }

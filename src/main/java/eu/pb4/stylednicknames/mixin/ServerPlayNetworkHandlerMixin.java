@@ -76,12 +76,12 @@ public class ServerPlayNetworkHandlerMixin implements NicknameHolder {
             var text = ParserUtils.getParser(requirePermission ? this.player : null)
                     .parseText(nickname, ParserContext.of());
 
-            this.colorOnlyMode = text.getString().toLowerCase(Locale.ROOT).equals(this.player.getGameProfile().getName().toLowerCase(Locale.ROOT));
+            this.colorOnlyMode = text.getString().toLowerCase(Locale.ROOT).equals(this.player.getGameProfile().name().toLowerCase(Locale.ROOT));
             this.styledNicknames$parsedNicknameRaw = text;
         }
 
         if (config.configData.changePlayerListName) {
-            Objects.requireNonNull(this.player.getServer()).getPlayerManager().sendToAll(new PlayerListS2CPacket(PlayerListS2CPacket.Action.UPDATE_DISPLAY_NAME, this.player));
+            Objects.requireNonNull(this.player.getEntityWorld().getServer()).getPlayerManager().sendToAll(new PlayerListS2CPacket(PlayerListS2CPacket.Action.UPDATE_DISPLAY_NAME, this.player));
         }
         ((NicknameCache) this.player).styledNicknames$invalidateCache();
     }
