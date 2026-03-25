@@ -6,13 +6,12 @@ import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import eu.pb4.placeholders.api.ParserContext;
+import eu.pb4.stylednicknames.FabricPermissionBridge;
 import eu.pb4.stylednicknames.NicknameHolder;
 import eu.pb4.stylednicknames.ParserUtils;
 import eu.pb4.stylednicknames.StyledNicknamesMod;
 import eu.pb4.stylednicknames.config.Config;
 import eu.pb4.stylednicknames.config.ConfigManager;
-import me.drex.vanish.api.VanishAPI;
-import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.ChatFormatting;
@@ -22,9 +21,12 @@ import net.minecraft.commands.arguments.EntityArgument;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.PermissionLevel;
+
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static eu.pb4.stylednicknames.StyledNicknamesMod.id;
 import static net.minecraft.commands.Commands.argument;
 import static net.minecraft.commands.Commands.literal;
 
@@ -35,16 +37,16 @@ public class Commands {
         CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
             dispatcher.register(
                     literal("styled-nicknames")
-                            .requires(Permissions.require("stylednicknames.main", true))
+                            .requires(FabricPermissionBridge.require(id("main"), true))
                             .executes(Commands::about)
 
                             .then(literal("reload")
-                                    .requires(Permissions.require("stylednicknames.reload", 3))
+                                    .requires(FabricPermissionBridge.require(id("reload"), PermissionLevel.ADMINS))
                                     .executes(Commands::reloadConfig)
                             )
 
                             .then(literal("set")
-                                    .requires(Permissions.require("stylednicknames.change_others", 3))
+                                    .requires(FabricPermissionBridge.require(id("change_others"), PermissionLevel.ADMINS))
                                     .then(argument("player", EntityArgument.player())
                                             .then(argument("nickname", StringArgumentType.greedyString()).suggests(OTHER_PREVIOUS_NICKNAME_PROVIDER)
                                                     .executes(Commands::changeOther)
@@ -52,7 +54,7 @@ public class Commands {
                                     )
                             )
                             .then(literal("clear")
-                                    .requires(Permissions.require("stylednicknames.change_others", 3))
+                                    .requires(FabricPermissionBridge.require(id("change_others"), PermissionLevel.ADMINS))
                                     .then(argument("player", EntityArgument.player())
                                             .executes(Commands::resetOther)
                                     )
@@ -61,7 +63,7 @@ public class Commands {
 
             var node = dispatcher.register(
                     literal("nickname")
-                            .requires(Permissions.require("stylednicknames.use", 3).or((s) -> ConfigManager.getConfig().configData.allowByDefault))
+                            .requires(FabricPermissionBridge.require(id("use"), PermissionLevel.ADMINS).or((s) -> ConfigManager.getConfig().configData.allowByDefault))
 
                             .then(literal("set")
                                     .then(argument("nickname", StringArgumentType.greedyString()).suggests(PREVIOUS_NICKNAME_PROVIDER)
@@ -73,13 +75,13 @@ public class Commands {
 
             dispatcher.register(
                     literal("nick")
-                            .requires(Permissions.require("stylednicknames.use", 3).or((s) -> ConfigManager.getConfig().configData.allowByDefault))
+                            .requires(FabricPermissionBridge.require(id("use"), PermissionLevel.ADMINS).or((s) -> ConfigManager.getConfig().configData.allowByDefault))
                             .redirect(node)
             );
 
             dispatcher.register(
                     literal("realname")
-                            .requires(Permissions.require("stylednicknames.realname", 3).or((s) -> ConfigManager.getConfig().configData.allowByDefault))
+                            .requires(FabricPermissionBridge.require(id("realname"), PermissionLevel.ADMINS).or((s) -> ConfigManager.getConfig().configData.allowByDefault))
                             .then(argument("nickname", StringArgumentType.greedyString()).suggests(NICKNAME_PROVIDER)
                                     .executes(Commands::realname)
                             )
@@ -93,9 +95,9 @@ public class Commands {
         var nickname = context.getArgument("nickname", String.class);
         if (config.configData.maxLength > 0) {
             var parser = ParserUtils.getParser(context.getSource().getPlayerOrException());
-            var output = parser.parseText(nickname, ParserContext.of());
+            var output = parser.parseComponent(nickname, ParserContext.of());
 
-            if (output.getString().length() > config.configData.maxLength && !Permissions.check(context.getSource(), "stylednicknames.ignore_limit", 2)) {
+            if (output.getString().length() > config.configData.maxLength && !FabricPermissionBridge.checkPermission(context.getSource(), id("ignore_limit"), PermissionLevel.GAMEMASTERS)) {
                 context.getSource().sendSuccess(() -> ConfigManager.getConfig().tooLongText, false);
                 return 1;
             }
@@ -109,7 +111,7 @@ public class Commands {
 
         holder.styledNicknames$set(nickname, true);
         context.getSource().sendSuccess(() ->
-                        ConfigManager.getConfig().changeText.toText(ParserContext.of(Config.KEY, holder.styledNicknames$placeholdersCommand())),
+                        ConfigManager.getConfig().changeText.toComponent(ParserContext.of(Config.KEY, holder.styledNicknames$placeholdersCommand())),
                 false);
         return 0;
     }
@@ -117,7 +119,7 @@ public class Commands {
     private static int reset(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
         NicknameHolder.of(context.getSource().getPlayerOrException()).styledNicknames$set(null, false);
         context.getSource().sendSuccess(() ->
-                        ConfigManager.getConfig().resetText.toText(ParserContext.of(Config.KEY, (x) -> context.getSource().getPlayer().getName()
+                        ConfigManager.getConfig().resetText.toComponent(ParserContext.of(Config.KEY, (x) -> context.getSource().getPlayer().getName()
                         )),
                 false);
         return 0;
@@ -204,7 +206,7 @@ public class Commands {
 
     private static boolean canSeePlayer(ServerPlayer player, CommandSourceStack viewing) {
         if (VANISH) {
-            return VanishAPI.canSeePlayer(player.level().getServer(), player.getUUID(), viewing);
+            //return VanishAPI.canSeePlayer(player.level().getServer(), player.getUUID(), viewing);
         }
         return true;
     }

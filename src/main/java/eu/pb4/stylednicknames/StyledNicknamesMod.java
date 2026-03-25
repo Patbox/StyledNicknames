@@ -29,10 +29,10 @@ public class StyledNicknamesMod implements ModInitializer {
 			ConfigManager.loadConfig();
 		});
 
-		Placeholders.register(Identifier.fromNamespaceAndPath("styled-nicknames","display_name"), (ctx, arg) -> {
+		Placeholders.registerServer(Identifier.fromNamespaceAndPath("styled-nicknames","display_name"), (ctx, arg) -> {
 			if (ctx.hasPlayer()) {
-				if (ctx.player().connection != null) {
-					return PlaceholderResult.value(NicknameHolder.of(ctx.player().connection).styledNicknames$getOutputOrVanilla());
+				if (ctx.serverPlayer().connection != null) {
+					return PlaceholderResult.value(NicknameHolder.of(ctx.serverPlayer().connection).styledNicknames$getOutputOrVanilla());
 				} else {
 					return PlaceholderResult.value(ctx.player().getName());
 				}

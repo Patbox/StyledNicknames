@@ -1,6 +1,5 @@
 package eu.pb4.stylednicknames.config.data;
 
-import eu.pb4.placeholders.api.parsers.TextParserV1;
 import eu.pb4.placeholders.api.parsers.tag.TagRegistry;
 import eu.pb4.stylednicknames.config.ConfigManager;
 import java.util.ArrayList;

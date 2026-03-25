@@ -3,12 +3,14 @@ package eu.pb4.stylednicknames;
 import eu.pb4.placeholders.api.parsers.NodeParser;
 import eu.pb4.placeholders.api.parsers.tag.TagRegistry;
 import eu.pb4.stylednicknames.config.ConfigManager;
-import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.ChatFormatting;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.permissions.PermissionLevel;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+
+import static eu.pb4.stylednicknames.StyledNicknamesMod.id;
 
 public class ParserUtils {
 
@@ -20,7 +22,7 @@ public class ParserUtils {
             var registry = TagRegistry.create();
             for (var entry : TagRegistry.SAFE.getTags()) {
                 if ((config.defaultFormattingCodes.getBoolean(entry.name())
-                        || Permissions.check(player.createCommandSourceStack(), "stylednicknames.format." + entry.name(), 2))) {
+                        || FabricPermissionBridge.checkPermission(player, id("format/" + entry.name()), PermissionLevel.GAMEMASTERS))) {
                     registry.register(entry);
                 }
             }

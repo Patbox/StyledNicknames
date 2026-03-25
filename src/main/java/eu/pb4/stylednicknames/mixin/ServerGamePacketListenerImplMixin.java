@@ -2,12 +2,12 @@ package eu.pb4.stylednicknames.mixin;
 
 import eu.pb4.placeholders.api.ParserContext;
 import eu.pb4.playerdata.api.PlayerDataApi;
+import eu.pb4.stylednicknames.FabricPermissionBridge;
 import eu.pb4.stylednicknames.NicknameCache;
 import eu.pb4.stylednicknames.NicknameHolder;
 import eu.pb4.stylednicknames.ParserUtils;
 import eu.pb4.stylednicknames.config.Config;
 import eu.pb4.stylednicknames.config.ConfigManager;
-import me.lucko.fabric.api.permissions.v0.Permissions;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.nbt.ByteTag;
 import net.minecraft.nbt.StringTag;
@@ -16,6 +16,7 @@ import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.protocol.game.ClientboundPlayerInfoUpdatePacket;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.server.network.ServerGamePacketListenerImpl;
+import net.minecraft.server.permissions.PermissionLevel;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -59,7 +60,7 @@ public class ServerGamePacketListenerImplMixin implements NicknameHolder {
     public void styledNicknames$set(String nickname, boolean requirePermission) {
         Config config = ConfigManager.getConfig();
         CommandSourceStack source = player.createCommandSourceStack();
-        if (nickname == null || nickname.isEmpty() || (requirePermission && !Permissions.check(source, "stylednicknames.use", ConfigManager.getConfig().configData.allowByDefault ? 0 : 2))) {
+        if (nickname == null || nickname.isEmpty() || (requirePermission && !FabricPermissionBridge.checkPermission(player, id("use"), ConfigManager.getConfig().configData.allowByDefault ? PermissionLevel.ALL : PermissionLevel.GAMEMASTERS))) {
             this.styledNicknames$nickname = null;
             this.styledNicknames$requirePermission = false;
             this.styledNicknames$parsedNicknameRaw = null;
@@ -72,7 +73,7 @@ public class ServerGamePacketListenerImplMixin implements NicknameHolder {
             PlayerDataApi.setGlobalDataFor(this.player, id("permission"), ByteTag.valueOf(requirePermission));
 
             var text = ParserUtils.getParser(requirePermission ? this.player : null)
-                    .parseText(nickname, ParserContext.of());
+                    .parseComponent(nickname, ParserContext.of());
 
             this.colorOnlyMode = text.getString().toLowerCase(Locale.ROOT).equals(this.player.getGameProfile().name().toLowerCase(Locale.ROOT));
             this.styledNicknames$parsedNicknameRaw = text;
@@ -98,14 +99,14 @@ public class ServerGamePacketListenerImplMixin implements NicknameHolder {
     public @Nullable MutableComponent styledNicknames$getOutput() {
         return this.styledNicknames$parsedNicknameRaw != null
                 ? (this.colorOnlyMode ? ConfigManager.getConfig().nicknameFormatColor : ConfigManager.getConfig().nicknameFormat)
-                .toText(ParserContext.of(Config.KEY, (s) -> this.styledNicknames$parsedNicknameRaw)).copy() : null;
+                .toComponent(ParserContext.of(Config.KEY, (s) -> this.styledNicknames$parsedNicknameRaw)).copy() : null;
     }
 
     @Override
     public MutableComponent styledNicknames$getOutputOrVanilla() {
         return this.styledNicknames$parsedNicknameRaw != null
                 ? (this.colorOnlyMode ? ConfigManager.getConfig().nicknameFormatColor : ConfigManager.getConfig().nicknameFormat)
-                .toText(ParserContext.of(Config.KEY, (s) -> this.styledNicknames$parsedNicknameRaw)).copy() : this.player.getName().copy();    }
+                .toComponent(ParserContext.of(Config.KEY, (s) -> this.styledNicknames$parsedNicknameRaw)).copy() : this.player.getName().copy();    }
 
     @Override
     public boolean styledNicknames$requiresPermission() {
@@ -114,7 +115,7 @@ public class ServerGamePacketListenerImplMixin implements NicknameHolder {
 
     @Override
     public boolean styledNicknames$shouldDisplay() {
-        return this.styledNicknames$parsedNicknameRaw != null && (!this.styledNicknames$requirePermission || Permissions.check(this.player.createCommandSourceStack(), "stylednicknames.use", ConfigManager.getConfig().configData.allowByDefault ? 0 : 3));
+        return this.styledNicknames$parsedNicknameRaw != null && (!this.styledNicknames$requirePermission || FabricPermissionBridge.checkPermission(player, id("use"), ConfigManager.getConfig().configData.allowByDefault ? PermissionLevel.ALL : PermissionLevel.GAMEMASTERS));
     }
 
     @Override
