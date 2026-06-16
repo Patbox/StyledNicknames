@@ -5,6 +5,7 @@ import eu.pb4.stylednicknames.config.ConfigManager;
 import java.util.ArrayList;
 import java.util.HashMap;
 import net.minecraft.ChatFormatting;
+import net.minecraft.world.scores.TeamColor;
 
 public class ConfigData {
     public int CONFIG_VERSION_DONT_TOUCH_THIS = ConfigManager.VERSION;
@@ -26,8 +27,8 @@ public class ConfigData {
     private static HashMap<String, Boolean> getDefaultFormatting() {
         HashMap<String, Boolean> map = new HashMap<>();
         for (var tag : TagRegistry.SAFE.getTags()) {
-            var color = ChatFormatting.getByName(tag.name());
-            map.put(tag.name(), color != null && color != ChatFormatting.BLACK);
+            var color = TeamColor.byName(tag.name());
+            map.put(tag.name(), color != null && color != TeamColor.BLACK);
         }
         return map;
     }

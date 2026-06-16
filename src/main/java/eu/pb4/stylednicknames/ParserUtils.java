@@ -9,6 +9,7 @@ import net.minecraft.server.permissions.PermissionLevel;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.Locale;
 
 import static eu.pb4.stylednicknames.StyledNicknamesMod.id;
 
@@ -32,7 +33,7 @@ public class ParserUtils {
             if (config.configData.allowLegacyFormatting) {
                 var formats = new ArrayList<ChatFormatting>();
                 for (ChatFormatting formatting : ChatFormatting.values()) {
-                    if (registry.getTag(formatting.getName()) != null) {
+                    if (registry.getTag(formatting.name().toLowerCase(Locale.ROOT)) != null) {
                         formats.add(formatting);
                     }
                 }
