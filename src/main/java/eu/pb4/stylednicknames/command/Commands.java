@@ -116,12 +116,24 @@ public class Commands {
         return 0;
     }
 
-    private static int reset(CommandContext<CommandSourceStack> context) throws CommandSyntaxException {
-        NicknameHolder.of(context.getSource().getPlayerOrException()).styledNicknames$set(null, false);
-        context.getSource().sendSuccess(() ->
-                        ConfigManager.getConfig().resetText.toComponent(ParserContext.of(Config.KEY, (x) -> context.getSource().getPlayer().getName()
-                        )),
-                false);
+    private static int reset(CommandContext<CommandSourceStack> context)
+        throws CommandSyntaxException {
+        var holder = NicknameHolder.of(
+            context.getSource().getPlayerOrException()
+        );
+        holder.styledNicknames$set(null, false);
+        context
+            .getSource()
+            .sendSuccess(
+                () ->
+                    ConfigManager.getConfig().resetText.toComponent(
+                        ParserContext.of(
+                            Config.KEY,
+                            holder.styledNicknames$placeholdersCommand()
+                        )
+                    ),
+                false
+            );
         return 0;
     }
 

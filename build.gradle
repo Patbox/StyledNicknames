@@ -63,6 +63,7 @@ tasks.withType(JavaCompile).configureEach {
 
 	// Minecraft 1.17 (21w19a) upwards uses Java 16.
 	it.options.release = 25
+	options.compilerArgs << "-Xlint:deprecation"
 }
 
 java {
